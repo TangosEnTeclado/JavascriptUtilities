@@ -1,0 +1,73 @@
+<html>
+
+<head>
+    <script src="./JsDynamicLoader.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="../Others/bootstrap-5.0.2-dist/css/bootstrap.min.css">
+    </script>
+    <script src="./jquery-3.6.0.min.js" type="text/javascript"></script>
+
+    <script src="../Others/bootstrap-5.0.2-dist/js/bootstrap.bundle.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        const fileSelectedLabelDefaultValue = "No file selected";
+
+        var onLoadBtnClicked = async function () {
+            var file = $('#customScriptSelector').val();
+            if (!file)
+                return;
+
+            loadScript(getScriptName(file));
+        }
+
+        const loadScript = (scr) => loadScriptAsync(scr)
+            .then((script) => onLoadScriptCompleted(script))
+            .catch((script) => onLoadScriptFailed(script.src));
+
+        var afterScriptAppended = () => {
+
+        }
+
+        const onLoadScriptFailed = (script) => {
+            console.log("Error on loading " + script + " js script")
+        }
+
+        const onLoadScriptCompleted = (script) => {
+            document.head.append(script);
+            afterScriptAppended();
+        }
+
+
+        function getScriptName(src) {
+            return src.includes("C:\\fakepath\\")
+                ? src.replace("C:\\fakepath\\", "")
+                : src;
+        }
+
+        const resetSelection = () => {
+            $('#customScriptSelector').text(fileSelectedLabelDefaultValue);
+        }
+
+        const runScript = () => {
+            var injectedScriptText = $('#injectedScript').val();
+            document.head.append(createScriptWithContentAsync(injectedScriptText));
+        }
+
+        $('#customScriptSelector').text(fileSelectedLabelDefaultValue);
+    </script>
+</head>
+<div>
+    <div class="fileSelector">
+        <!-- <button type="button" class="btn btn-primary" onclick="onLoadBtnClicked();">Load</button> -->
+        <label class="form-label" for="customFile">Select script to load:</label>
+        <input type="file" class="form-control" id="customScriptSelector" />
+        <script type="text/javascript">
+            $('#customScriptSelector').change(function () {
+                onLoadBtnClicked();
+            });
+        </script>
+    </div>
+    <label class="form-label" for="customFile">Insert js script:</label>
+    <textarea class="form-control" rows="5" id="injectedScript"></textarea>
+    <button type="button" class="btn btn-secondary" onclick="runScript();">Run</button>
+</div>
+
+</html>
